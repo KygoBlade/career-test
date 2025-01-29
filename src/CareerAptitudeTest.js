@@ -1,7 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { Card, CardContent } from "../components/ui/card";
-import { Button } from "../components/ui/button";
-import { Progress } from "../components/ui/progress";
+import React, { useState, useEffect } from "react";
+
+function Card({ children }) {
+  return <div style={{ border: "1px solid #ccc", padding: "20px", borderRadius: "8px", backgroundColor: "#fff" }}>{children}</div>;
+}
+
+function CardContent({ children }) {
+  return <div>{children}</div>;
+}
+
+function Button({ children, onClick }) {
+  return <button style={{ padding: "10px", margin: "5px", cursor: "pointer" }} onClick={onClick}>{children}</button>;
+}
+
+function Progress({ value }) {
+  return <div style={{ width: "100%", background: "#ddd", borderRadius: "5px" }}><div style={{ width: `${value}%`, height: "10px", background: "green", borderRadius: "5px" }}></div></div>;
+}
+
 
 const questions = [
   // Placeholder: Will expand to 200+ questions covering various domains
