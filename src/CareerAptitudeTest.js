@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import questionBank from "./full_question_bank.json"; // Load the JSON file
+
 
 function Card({ children }) {
   return <div style={{ border: "1px solid #ccc", padding: "20px", borderRadius: "8px", backgroundColor: "#fff" }}>{children}</div>;
@@ -69,7 +71,13 @@ const getRandomQuestions = (numQuestions) => {
 };
 
 // Select 100 questions per test
+const getRandomQuestions = (numQuestions) => {
+  const shuffled = questionBank.sort(() => 0.5 - Math.random()); // Shuffle questions
+  return shuffled.slice(0, numQuestions); // Select 100 random questions
+};
+
 const selectedQuestions = getRandomQuestions(100);
+
 
 export default function CareerAptitudeTest() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
