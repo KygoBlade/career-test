@@ -9,16 +9,38 @@ function CardContent({ children }) {
 }
 
 function Button({ children, onClick }) {
-  return <button style={{ padding: "10px", margin: "5px", cursor: "pointer" }} onClick={onClick}>{children}</button>;
+  return (
+    <button
+      style={{
+        width: "100%",
+        padding: "12px",
+        margin: "8px 0",
+        cursor: "pointer",
+        background: "#007BFF",
+        color: "#FFF",
+        border: "none",
+        borderRadius: "5px",
+        fontSize: "16px",
+        transition: "background 0.2s ease-in-out",
+      }}
+      onClick={onClick}
+      onMouseOver={(e) => (e.target.style.background = "#0056b3")}
+      onMouseOut={(e) => (e.target.style.background = "#007BFF")}
+    >
+      {children}
+    </button>
+  );
 }
 
 function Progress({ value }) {
-  return <div style={{ width: "100%", background: "#ddd", borderRadius: "5px" }}><div style={{ width: `${value}%`, height: "10px", background: "green", borderRadius: "5px" }}></div></div>;
+  return (
+    <div style={{ width: "100%", background: "#ddd", borderRadius: "5px", margin: "10px 0" }}>
+      <div style={{ width: `${value}%`, height: "10px", background: "green", borderRadius: "5px" }}></div>
+    </div>
+  );
 }
 
-
 const questions = [
-  // Placeholder: Will expand to 200+ questions covering various domains
   {
     category: "Mechanical & Technical Aptitude",
     difficulty: 1,
@@ -32,7 +54,6 @@ const questions = [
     correct: 0,
     type: "multiple-choice"
   },
-  // More questions will be added dynamically
 ];
 
 export default function CareerAptitudeTest() {
@@ -55,14 +76,16 @@ export default function CareerAptitudeTest() {
   }, [timer]);
 
   const handleAnswer = (index) => {
+    if (index === null) return; // Prevent errors if auto-advancing
     const newAnswers = [...answers, index];
     setAnswers(newAnswers);
 
     const category = questions[currentQuestion].category;
     const questionDifficulty = questions[currentQuestion].difficulty;
+
     setScore((prevScore) => ({
       ...prevScore,
-      [category]: (prevScore[category] || 0) + (index === questions[currentQuestion].correct ? questionDifficulty : 0)
+      [category]: (prevScore[category] || 0) + (index === questions[currentQuestion].correct ? questionDifficulty : 0),
     }));
 
     if (index === questions[currentQuestion].correct) {
@@ -71,8 +94,9 @@ export default function CareerAptitudeTest() {
       setDifficulty(Math.max(difficulty - 1, 1));
     }
 
+    // Ensure the question progresses
     if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
+      setCurrentQuestion((prev) => prev + 1);
       setProgress(((currentQuestion + 1) / questions.length) * 100);
       setTimer(30);
     } else {
@@ -96,19 +120,17 @@ export default function CareerAptitudeTest() {
   };
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
+    <div style={{ padding: "20px", maxWidth: "600px", margin: "auto" }}>
       <Card>
         <CardContent>
-          <h2 className="text-xl font-bold mb-4">{questions[currentQuestion].question}</h2>
-          <Progress value={progress} className="mb-4" />
-          <p className="text-sm text-gray-600">Time Left: {timer}s</p>
-          <div className="space-y-2">
+          <h2 style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "10px" }}>
+            {questions[currentQuestion].question}
+          </h2>
+          <Progress value={progress} />
+          <p style={{ fontSize: "14px", color: "#666" }}>Time Left: {timer}s</p>
+          <div>
             {questions[currentQuestion].options.map((option, index) => (
-              <Button
-                key={index}
-                className="w-full"
-                onClick={() => handleAnswer(index)}
-              >
+              <Button key={index} onClick={() => handleAnswer(index)}>
                 {option}
               </Button>
             ))}
@@ -116,8 +138,8 @@ export default function CareerAptitudeTest() {
         </CardContent>
       </Card>
       {careerRecommendations && (
-        <div className="mt-6 p-4 bg-green-100 rounded">
-          <h3 className="text-lg font-semibold">Career Recommendations:</h3>
+        <div style={{ marginTop: "20px", padding: "15px", backgroundColor: "#d4edda", borderRadius: "5px" }}>
+          <h3 style={{ fontSize: "18px", fontWeight: "bold" }}>Career Recommendations:</h3>
           <p>{careerRecommendations}</p>
         </div>
       )}
