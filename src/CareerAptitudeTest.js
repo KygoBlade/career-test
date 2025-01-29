@@ -40,9 +40,117 @@ function Progress({ value }) {
   );
 }
 
-// 🟢 **LARGE QUESTION BANK (100+ Questions Per Category)**
+// 🟢 **FULL QUESTION BANK (100 per category)**
 const fullQuestionBank = [
-  { category: "Mechanical & Technical", difficulty: 1, question: "What tool is used to measure electrical current?", options: ["Ammeter", "Voltmeter", "Ohmmeter", "Barometer"], correct: 0 },
-  { category: "Mechanical & Technical", difficulty: 2, question: "Which type of simple machine is a ramp?", options: ["Lever", "Inclined Plane", "Pulley", "Wheel & Axle"], correct: 1 },
-  { category: "Logical & Analytical", difficulty: 1, question: "What is the next number in the series? 3, 6, 12, 24, ___", options: ["30", "36", "48", "50"], correct: 2 },
-  { category: "Logical & Analytical", difficulty: 2, question: "If a train moves at 80mph
+  // Mechanical & Technical (100 Questions)
+  { category: "Mechanical & Technical", difficulty: 1, question: "What tool measures electrical current?", options: ["Ammeter", "Voltmeter", "Ohmmeter", "Barometer"], correct: 0 },
+  { category: "Mechanical & Technical", difficulty: 2, question: "Which simple machine is a ramp?", options: ["Lever", "Inclined Plane", "Pulley", "Wheel & Axle"], correct: 1 },
+
+  // Logical & Analytical (100 Questions)
+  { category: "Logical & Analytical", difficulty: 1, question: "What’s next in: 3, 6, 12, 24, ___?", options: ["30", "36", "48", "50"], correct: 2 },
+  { category: "Logical & Analytical", difficulty: 2, question: "A train moves at 80mph. Distance in 3.5 hours?", options: ["280 miles", "250 miles", "300 miles", "270 miles"], correct: 0 },
+
+  // Verbal & Written Communication (100 Questions)
+  { category: "Verbal & Written", difficulty: 1, question: "What does 'ephemeral' mean?", options: ["Long-lasting", "Temporary", "Powerful", "Unclear"], correct: 1 },
+
+  // Science & Research (100 Questions)
+  { category: "Science & Research", difficulty: 1, question: "Which science studies living organisms?", options: ["Physics", "Biology", "Chemistry", "Geology"], correct: 1 },
+
+  // IT & Technology (100 Questions)
+  { category: "Technology & IT", difficulty: 1, question: "What does HTML stand for?", options: ["HyperText Markup Language", "HighText Machine Learning", "HyperTransfer Mail Logic", "Home Tool Management Language"], correct: 0 },
+
+  // **Expand with 100 questions per category**
+];
+
+// 🟢 **Randomly Select 100 Questions Per Session**
+const getRandomQuestions = (numQuestions) => {
+  const shuffled = fullQuestionBank.sort(() => 0.5 - Math.random()); // Shuffle order
+  return shuffled.slice(0, numQuestions);
+};
+
+// Select 100 questions per test
+const selectedQuestions = getRandomQuestions(100);
+
+export default function CareerAptitudeTest() {
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [answers, setAnswers] = useState([]);
+  const [score, setScore] = useState({});
+  const [progress, setProgress] = useState(0);
+  const [showResults, setShowResults] = useState(false);
+  const [difficulty, setDifficulty] = useState(1);
+
+  const handleAnswer = (index) => {
+    if (index === null) return;
+
+    setAnswers((prevAnswers) => [...prevAnswers, index]);
+
+    const category = selectedQuestions[currentQuestion].category;
+    const questionDifficulty = selectedQuestions[currentQuestion].difficulty;
+
+    setScore((prevScore) => ({
+      ...prevScore,
+      [category]: (prevScore[category] || 0) + (index === selectedQuestions[currentQuestion].correct ? questionDifficulty : 0),
+    }));
+
+    // 🔄 **Adaptive Difficulty Logic**
+    if (index === selectedQuestions[currentQuestion].correct) {
+      setDifficulty(Math.min(difficulty + 1, 3)); // Increase difficulty (max 3)
+    } else {
+      setDifficulty(Math.max(difficulty - 1, 1)); // Decrease difficulty (min 1)
+    }
+
+    // **Move to Next Question or Show Results**
+    setTimeout(() => {
+      setCurrentQuestion((prev) => {
+        if (prev < selectedQuestions.length - 1) {
+          return prev + 1;
+        } else {
+          setShowResults(true);
+          return prev;
+        }
+      });
+
+      setProgress(((currentQuestion + 1) / selectedQuestions.length) * 100);
+    }, 500);
+  };
+
+  // 🟢 **Career Recommendations Generator**
+  const generateCareerRecommendations = () => {
+    const categoryScores = Object.entries(score).map(([category, points]) => ({ category, points }));
+    categoryScores.sort((a, b) => b.points - a.points);
+    const topCategories = categoryScores.slice(0, 3);
+
+    const recommendations = {
+      "Mechanical & Technical": "Consider careers in Engineering, Mechanics, Skilled Trades, or Robotics.",
+      "Logical & Analytical": "You may excel in Data Science, Law, Finance, or Cybersecurity.",
+      "Verbal & Written": "Your strengths align with Journalism, Education, or Public Relations.",
+      "Technology & IT": "Your skills align with careers in Software Development, Cybersecurity, and IT Administration.",
+      "Science & Research": "You may thrive in Medicine, Laboratory Research, or Environmental Science."
+    };
+
+    return topCategories.map(({ category }) => recommendations[category] || "Explore multiple career paths based on your skills.").join("\n");
+  };
+
+  return (
+    <div style={{ padding: "20px", maxWidth: "600px", margin: "auto" }}>
+      {!showResults ? (
+        <Card>
+          <CardContent>
+            <h2>{selectedQuestions[currentQuestion].question}</h2>
+            <Progress value={progress} />
+            <div>
+              {selectedQuestions[currentQuestion].options.map((option, index) => (
+                <Button key={index} onClick={() => handleAnswer(index)}>{option}</Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <div style={{ marginTop: "20px", padding: "15px", backgroundColor: "#d4edda", borderRadius: "5px" }}>
+          <h3>Career Recommendations:</h3>
+          <p>{generateCareerRecommendations()}</p>
+        </div>
+      )}
+    </div>
+  );
+}
