@@ -137,6 +137,13 @@ export default function CareerAptitudeTest() {
 
   return (
     <div style={{ padding: "20px", maxWidth: "600px", margin: "auto" }}>
+<div style={{ backgroundColor: "#f8f9fa", padding: "10px", borderRadius: "5px", marginBottom: "10px" }}>
+  <h3>🛠 Debugging Info</h3>
+  <p><strong>Total Questions Selected:</strong> {selectedQuestions.length}</p>
+  <p><strong>Current Question Index:</strong> {currentQuestion + 1} / 100</p>
+  <p><strong>Test Progress:</strong> {progress.toFixed(2)}%</p>
+</div>
+
       {!showResults ? (
         <Card>
           <CardContent>
