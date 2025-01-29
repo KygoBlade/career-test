@@ -64,19 +64,14 @@ const fullQuestionBank = [
   // **Expand with 100 questions per category**
 ];
 
-// 🟢 **Randomly Select 100 Questions Per Session**
 const getRandomQuestions = (numQuestions) => {
-  const shuffled = fullQuestionBank.sort(() => 0.5 - Math.random()); // Shuffle order
-  return shuffled.slice(0, numQuestions);
-};
-
-// Select 100 questions per test
-const getRandomQuestions = (numQuestions) => {
-  const shuffled = questionBank.sort(() => 0.5 - Math.random()); // Shuffle questions
-  return shuffled.slice(0, numQuestions); // Select 100 random questions
+  let shuffled = [...questionBank].sort(() => Math.random() - 0.5); // Shuffle a copy (not the original)
+  return shuffled.length >= numQuestions ? shuffled.slice(0, numQuestions) : shuffled; // Ensure 100 questions
 };
 
 const selectedQuestions = getRandomQuestions(100);
+console.log("Selected Questions Count:", selectedQuestions.length); // Debugging log
+
 
 
 export default function CareerAptitudeTest() {
