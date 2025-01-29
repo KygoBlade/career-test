@@ -54,6 +54,14 @@ const questions = [
     correct: 0,
     type: "multiple-choice"
   },
+  {
+    category: "Logical & Analytical Thinking",
+    difficulty: 1,
+    question: "What is the next number in the sequence? 2, 4, 8, 16, __?",
+    options: ["24", "32", "40", "48"],
+    correct: 1,
+    type: "multiple-choice"
+  }
 ];
 
 export default function CareerAptitudeTest() {
@@ -77,6 +85,7 @@ export default function CareerAptitudeTest() {
 
   const handleAnswer = (index) => {
     if (index === null) return; // Prevent errors if auto-advancing
+
     const newAnswers = [...answers, index];
     setAnswers(newAnswers);
 
@@ -94,13 +103,15 @@ export default function CareerAptitudeTest() {
       setDifficulty(Math.max(difficulty - 1, 1));
     }
 
-    // Ensure the question progresses
+    // 🚨 **Fixed: Ensure the test continues through all questions**
     if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion((prev) => prev + 1);
-      setProgress(((currentQuestion + 1) / questions.length) * 100);
-      setTimer(30);
+      setTimeout(() => {
+        setCurrentQuestion((prev) => prev + 1);
+        setProgress(((currentQuestion + 1) / questions.length) * 100);
+        setTimer(30);
+      }, 500); // Slight delay for better UX
     } else {
-      generateCareerRecommendations();
+      setTimeout(() => generateCareerRecommendations(), 500);
     }
   };
 
