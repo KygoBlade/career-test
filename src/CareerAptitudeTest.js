@@ -105,7 +105,7 @@ export default function CareerAptitudeTest() {
     // **Move to Next Question or Show Results**
     setTimeout(() => {
       setCurrentQuestion((prev) => {
-        if (prev < selectedQuestions.length - 1) {
+        if (prev + 1 < 100) { // Ensure the test runs exactly 100 questions
           return prev + 1;
         } else {
           setShowResults(true);
@@ -113,8 +113,9 @@ export default function CareerAptitudeTest() {
         }
       });
 
-      setProgress(((currentQuestion + 1) / selectedQuestions.length) * 100);
+      setProgress(((currentQuestion + 1) / 100) * 100); // Always base progress on 100 questions
     }, 500);
+
   };
 
   // 🟢 **Career Recommendations Generator**
