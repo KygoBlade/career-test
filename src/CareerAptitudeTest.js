@@ -40,6 +40,7 @@ function Progress({ value }) {
   );
 }
 
+// 🟢 **Questions Set**
 const questions = [
   {
     category: "Mechanical & Technical Aptitude",
@@ -80,6 +81,7 @@ export default function CareerAptitudeTest() {
   const [timer, setTimer] = useState(30);
   const [showResults, setShowResults] = useState(false);
 
+  // 🟢 **TIMER FUNCTION**
   useEffect(() => {
     if (timer > 0) {
       const countdown = setTimeout(() => setTimer(timer - 1), 1000);
@@ -89,11 +91,11 @@ export default function CareerAptitudeTest() {
     }
   }, [timer]);
 
+  // 🟢 **Button Click Function (FIXED)**
   const handleAnswer = (index) => {
     if (index === null) return; // Prevent errors if auto-advancing
 
-    const newAnswers = [...answers, index];
-    setAnswers(newAnswers);
+    setAnswers((prevAnswers) => [...prevAnswers, index]);
 
     const category = questions[currentQuestion].category;
     const questionDifficulty = questions[currentQuestion].difficulty;
@@ -103,21 +105,23 @@ export default function CareerAptitudeTest() {
       [category]: (prevScore[category] || 0) + (index === questions[currentQuestion].correct ? questionDifficulty : 0),
     }));
 
-    // 🚨 **Fixed: Ensure the test continues through all questions**
-    if (currentQuestion < questions.length - 1) {
-      setTimeout(() => {
-        setCurrentQuestion((prev) => prev + 1);
-        setProgress(((currentQuestion + 1) / questions.length) * 100);
-        setTimer(30);
-      }, 500); // Slight delay for better UX
-    } else {
-      setTimeout(() => {
-        generateCareerRecommendations();
-        setShowResults(true); // Show results only at the end
-      }, 500);
-    }
+    // **🚀 Fixed: Ensure questions cycle properly**
+    setTimeout(() => {
+      setCurrentQuestion((prev) => {
+        if (prev < questions.length - 1) {
+          return prev + 1;
+        } else {
+          setShowResults(true);
+          return prev;
+        }
+      });
+
+      setProgress(((currentQuestion + 1) / questions.length) * 100);
+      setTimer(30);
+    }, 500);
   };
 
+  // 🟢 **Career Recommendations Function**
   const generateCareerRecommendations = () => {
     const categoryScores = Object.entries(score).map(([category, points]) => ({ category, points }));
     categoryScores.sort((a, b) => b.points - a.points);
@@ -129,8 +133,7 @@ export default function CareerAptitudeTest() {
       "Verbal & Written Communication": "You have strengths in Journalism, Education, Public Relations, or Legal Consulting."
     };
 
-    const bestMatches = topCategories.map(({ category }) => recommendations[category] || "Explore multiple career paths based on your skills.");
-    return bestMatches.join(" \n ");
+    return topCategories.map(({ category }) => recommendations[category] || "Explore multiple career paths based on your skills.").join("\n");
   };
 
   return (
