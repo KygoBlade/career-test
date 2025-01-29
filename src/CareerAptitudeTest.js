@@ -91,9 +91,11 @@ export default function CareerAptitudeTest() {
     }
   }, [timer]);
 
-  // 🟢 **Button Click Function (FIXED)**
+  // 🟢 **Button Click Function (With `alert()` Debugging)**
   const handleAnswer = (index) => {
-    if (index === null) return; // Prevent errors if auto-advancing
+    if (index === null) return;
+
+    alert(`Current Question: ${currentQuestion}`); // 🔥 Debugging: Shows current question before updating
 
     setAnswers((prevAnswers) => [...prevAnswers, index]);
 
@@ -105,13 +107,15 @@ export default function CareerAptitudeTest() {
       [category]: (prevScore[category] || 0) + (index === questions[currentQuestion].correct ? questionDifficulty : 0),
     }));
 
-    // **🚀 Fixed: Ensure questions cycle properly**
     setTimeout(() => {
       setCurrentQuestion((prev) => {
+        alert(`Next Question: ${prev + 1}`); // 🔥 Debugging: Shows next question index
+
         if (prev < questions.length - 1) {
           return prev + 1;
         } else {
           setShowResults(true);
+          alert("Showing results now."); // 🔥 Debugging: Shows when results appear
           return prev;
         }
       });
