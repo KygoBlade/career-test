@@ -61,6 +61,14 @@ const questions = [
     options: ["24", "32", "40", "48"],
     correct: 1,
     type: "multiple-choice"
+  },
+  {
+    category: "Verbal & Written Communication",
+    difficulty: 1,
+    question: "Which of the following words is a synonym for 'elated'?",
+    options: ["Sad", "Happy", "Angry", "Confused"],
+    correct: 1,
+    type: "multiple-choice"
   }
 ];
 
@@ -69,10 +77,8 @@ export default function CareerAptitudeTest() {
   const [answers, setAnswers] = useState([]);
   const [score, setScore] = useState({});
   const [progress, setProgress] = useState(0);
-  const [difficulty, setDifficulty] = useState(1);
   const [timer, setTimer] = useState(30);
-  const [careerRecommendations, setCareerRecommendations] = useState(null);
-  const [userProfile, setUserProfile] = useState({});
+  const [showResults, setShowResults] = useState(false);
 
   useEffect(() => {
     if (timer > 0) {
@@ -97,12 +103,6 @@ export default function CareerAptitudeTest() {
       [category]: (prevScore[category] || 0) + (index === questions[currentQuestion].correct ? questionDifficulty : 0),
     }));
 
-    if (index === questions[currentQuestion].correct) {
-      setDifficulty(Math.min(difficulty + 1, 3));
-    } else {
-      setDifficulty(Math.max(difficulty - 1, 1));
-    }
-
     // 🚨 **Fixed: Ensure the test continues through all questions**
     if (currentQuestion < questions.length - 1) {
       setTimeout(() => {
@@ -111,7 +111,10 @@ export default function CareerAptitudeTest() {
         setTimer(30);
       }, 500); // Slight delay for better UX
     } else {
-      setTimeout(() => generateCareerRecommendations(), 500);
+      setTimeout(() => {
+        generateCareerRecommendations();
+        setShowResults(true); // Show results only at the end
+      }, 500);
     }
   };
 
@@ -125,33 +128,34 @@ export default function CareerAptitudeTest() {
       "Logical & Analytical Thinking": "You may excel in Data Science, Law, Finance, or Cybersecurity.",
       "Verbal & Written Communication": "You have strengths in Journalism, Education, Public Relations, or Legal Consulting."
     };
-    
+
     const bestMatches = topCategories.map(({ category }) => recommendations[category] || "Explore multiple career paths based on your skills.");
-    setCareerRecommendations(bestMatches.join(" \n "));
+    return bestMatches.join(" \n ");
   };
 
   return (
     <div style={{ padding: "20px", maxWidth: "600px", margin: "auto" }}>
-      <Card>
-        <CardContent>
-          <h2 style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "10px" }}>
-            {questions[currentQuestion].question}
-          </h2>
-          <Progress value={progress} />
-          <p style={{ fontSize: "14px", color: "#666" }}>Time Left: {timer}s</p>
-          <div>
-            {questions[currentQuestion].options.map((option, index) => (
-              <Button key={index} onClick={() => handleAnswer(index)}>
-                {option}
-              </Button>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-      {careerRecommendations && (
+      {!showResults ? (
+        <Card>
+          <CardContent>
+            <h2 style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "10px" }}>
+              {questions[currentQuestion].question}
+            </h2>
+            <Progress value={progress} />
+            <p style={{ fontSize: "14px", color: "#666" }}>Time Left: {timer}s</p>
+            <div>
+              {questions[currentQuestion].options.map((option, index) => (
+                <Button key={index} onClick={() => handleAnswer(index)}>
+                  {option}
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
         <div style={{ marginTop: "20px", padding: "15px", backgroundColor: "#d4edda", borderRadius: "5px" }}>
           <h3 style={{ fontSize: "18px", fontWeight: "bold" }}>Career Recommendations:</h3>
-          <p>{careerRecommendations}</p>
+          <p>{generateCareerRecommendations()}</p>
         </div>
       )}
     </div>
