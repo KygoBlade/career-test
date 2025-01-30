@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import questionBank from "./full_question_bank.json"; // Load the JSON file
-
+import questionBank from "./full_question_bank.json"; // Load the full question bank from JSON
 
 function Card({ children }) {
   return <div style={{ border: "1px solid #ccc", padding: "20px", borderRadius: "8px", backgroundColor: "#fff" }}>{children}</div>;
@@ -42,43 +41,22 @@ function Progress({ value }) {
   );
 }
 
-// 🟢 **FULL QUESTION BANK (100 per category)**
-const fullQuestionBank = [
-  // Mechanical & Technical (100 Questions)
-  { category: "Mechanical & Technical", difficulty: 1, question: "What tool measures electrical current?", options: ["Ammeter", "Voltmeter", "Ohmmeter", "Barometer"], correct: 0 },
-  { category: "Mechanical & Technical", difficulty: 2, question: "Which simple machine is a ramp?", options: ["Lever", "Inclined Plane", "Pulley", "Wheel & Axle"], correct: 1 },
-
-  // Logical & Analytical (100 Questions)
-  { category: "Logical & Analytical", difficulty: 1, question: "What’s next in: 3, 6, 12, 24, ___?", options: ["30", "36", "48", "50"], correct: 2 },
-  { category: "Logical & Analytical", difficulty: 2, question: "A train moves at 80mph. Distance in 3.5 hours?", options: ["280 miles", "250 miles", "300 miles", "270 miles"], correct: 0 },
-
-  // Verbal & Written Communication (100 Questions)
-  { category: "Verbal & Written", difficulty: 1, question: "What does 'ephemeral' mean?", options: ["Long-lasting", "Temporary", "Powerful", "Unclear"], correct: 1 },
-
-  // Science & Research (100 Questions)
-  { category: "Science & Research", difficulty: 1, question: "Which science studies living organisms?", options: ["Physics", "Biology", "Chemistry", "Geology"], correct: 1 },
-
-  // IT & Technology (100 Questions)
-  { category: "Technology & IT", difficulty: 1, question: "What does HTML stand for?", options: ["HyperText Markup Language", "HighText Machine Learning", "HyperTransfer Mail Logic", "Home Tool Management Language"], correct: 0 },
-
-  // **Expand with 100 questions per category**
-];
-
+// ✅ Ensure 100 questions are selected properly
 const getRandomQuestions = (numQuestions) => {
-  let shuffled = [...questionBank].sort(() => Math.random() - 0.5); // Shuffle a copy (not the original)
-  return shuffled.length >= numQuestions ? shuffled.slice(0, numQuestions) : shuffled; // Ensure 100 questions
-};
-
-const getRandomQuestions = (numQuestions) => {
-  let shuffled = [...questionBank].sort(() => Math.random() - 0.5); // Shuffle a copy
-  let selected = shuffled.length >= numQuestions ? shuffled.slice(0, numQuestions) : shuffled;
+  if (!questionBank || questionBank.length < numQuestions) {
+    console.error("❌ ERROR: Not enough questions in the bank!");
+    return [];
+  }
+  
+  let shuffled = [...questionBank].sort(() => Math.random() - 0.5);
+  let selected = shuffled.slice(0, numQuestions);
+  
+  console.log("✅ Final Selected Questions Count:", selected.length); // Debugging log
   return selected;
 };
 
 const selectedQuestions = getRandomQuestions(100);
-console.log("Selected Questions Count:", selectedQuestions.length); // Debugging log
-
-
+console.log("✅ Selected Questions Confirmed:", selectedQuestions.length);
 
 export default function CareerAptitudeTest() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -109,23 +87,22 @@ export default function CareerAptitudeTest() {
     }
 
     // **Move to Next Question or Show Results**
-  setTimeout(() => {
-    console.log("Current Question:", currentQuestion + 1);
-    console.log("Total Questions in Test:", selectedQuestions.length);
+    setTimeout(() => {
+      console.log("Current Question:", currentQuestion + 1);
+      console.log("Total Questions in Test:", selectedQuestions.length);
 
-    setCurrentQuestion((prev) => {
-      if (prev + 1 < 100) {  // Forces 100 questions
-        return prev + 1;
-      } else {
-        console.log("Test Completed - Showing Results");
-        setShowResults(true);
-        return prev;
-      }
-    });
+      setCurrentQuestion((prev) => {
+        if (prev + 1 < selectedQuestions.length) {  // Uses actual length
+          return prev + 1;
+        } else {
+          console.log("✅ Test Completed - Showing Results");
+          setShowResults(true);
+          return prev;
+        }
+      });
 
-  setProgress(((currentQuestion + 1) / 100) * 100); // Always base progress on 100 questions
-}, 500);
-
+      setProgress(((currentQuestion + 1) / 100) * 100);
+    }, 500);
   };
 
   // 🟢 **Career Recommendations Generator**
@@ -147,12 +124,13 @@ export default function CareerAptitudeTest() {
 
   return (
     <div style={{ padding: "20px", maxWidth: "600px", margin: "auto" }}>
-<div style={{ backgroundColor: "#f8f9fa", padding: "10px", borderRadius: "5px", marginBottom: "10px" }}>
-  <h3>🛠 Debugging Info</h3>
-  <p><strong>Total Questions Selected:</strong> {selectedQuestions.length}</p>
-  <p><strong>Current Question Index:</strong> {currentQuestion + 1} / 100</p>
-  <p><strong>Test Progress:</strong> {progress.toFixed(2)}%</p>
-</div>
+      {/* Debugging Info on Screen */}
+      <div style={{ backgroundColor: "#f8f9fa", padding: "10px", borderRadius: "5px", marginBottom: "10px" }}>
+        <h3>🛠 Debugging Info</h3>
+        <p><strong>Total Questions Selected:</strong> {selectedQuestions.length}</p>
+        <p><strong>Current Question Index:</strong> {currentQuestion + 1} / 100</p>
+        <p><strong>Test Progress:</strong> {progress.toFixed(2)}%</p>
+      </div>
 
       {!showResults ? (
         <Card>
