@@ -69,6 +69,12 @@ const getRandomQuestions = (numQuestions) => {
   return shuffled.length >= numQuestions ? shuffled.slice(0, numQuestions) : shuffled; // Ensure 100 questions
 };
 
+const getRandomQuestions = (numQuestions) => {
+  let shuffled = [...questionBank].sort(() => Math.random() - 0.5); // Shuffle a copy
+  let selected = shuffled.length >= numQuestions ? shuffled.slice(0, numQuestions) : shuffled;
+  return selected;
+};
+
 const selectedQuestions = getRandomQuestions(100);
 console.log("Selected Questions Count:", selectedQuestions.length); // Debugging log
 
