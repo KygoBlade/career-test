@@ -44,14 +44,14 @@ function Progress({ value }) {
 // ✅ Ensure 100 questions are selected properly
 const getRandomQuestions = (numQuestions) => {
   if (!questionBank || questionBank.length < numQuestions) {
-    console.error("❌ ERROR: Not enough questions in the bank!");
-    return [];
+    console.error("❌ ERROR: Not enough questions in the bank! Using all available.");
+    return [...questionBank]; // Return all available questions instead of failing
   }
   
   let shuffled = [...questionBank].sort(() => Math.random() - 0.5);
   let selected = shuffled.slice(0, numQuestions);
-  
-  console.log("✅ Final Selected Questions Count:", selected.length); // Debugging log
+
+  console.log("✅ Final Selected Questions Count:", selected.length);
   return selected;
 };
 
@@ -88,11 +88,12 @@ export default function CareerAptitudeTest() {
 
     // **Move to Next Question or Show Results**
     setTimeout(() => {
-      console.log("Current Question:", currentQuestion + 1);
-      console.log("Total Questions in Test:", selectedQuestions.length);
+      console.log("📌 Moving to Next Question:", currentQuestion + 1);
+      console.log("📌 Total Questions in Test:", selectedQuestions.length);
 
       setCurrentQuestion((prev) => {
-        if (prev + 1 < selectedQuestions.length) {  // Uses actual length
+        if (prev + 1 < 100) { // Forces 100 questions no matter what
+          console.log("✅ Question", prev + 2, "loaded.");
           return prev + 1;
         } else {
           console.log("✅ Test Completed - Showing Results");
@@ -103,6 +104,7 @@ export default function CareerAptitudeTest() {
 
       setProgress(((currentQuestion + 1) / 100) * 100);
     }, 500);
+
   };
 
   // 🟢 **Career Recommendations Generator**
@@ -124,12 +126,11 @@ export default function CareerAptitudeTest() {
 
   return (
     <div style={{ padding: "20px", maxWidth: "600px", margin: "auto" }}>
-      {/* Debugging Info on Screen */}
       <div style={{ backgroundColor: "#f8f9fa", padding: "10px", borderRadius: "5px", marginBottom: "10px" }}>
         <h3>🛠 Debugging Info</h3>
-        <p><strong>Total Questions Selected:</strong> {selectedQuestions.length}</p>
-        <p><strong>Current Question Index:</strong> {currentQuestion + 1} / 100</p>
-        <p><strong>Test Progress:</strong> {progress.toFixed(2)}%</p>
+        <p><strong>✅ Total Questions Selected:</strong> {selectedQuestions.length}</p>
+        <p><strong>✅ Current Question:</strong> {currentQuestion + 1} / {Math.min(100, selectedQuestions.length)}</p>
+        <p><strong>✅ Test Progress:</strong> {progress.toFixed(2)}%</p>
       </div>
 
       {!showResults ? (
